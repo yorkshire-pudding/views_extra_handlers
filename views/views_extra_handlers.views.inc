@@ -67,7 +67,7 @@ function views_extra_handlers_views_data() {
     'help' => t('The actual content of the imported item.'),
      // Information for displaying a title as a field
     'field' => array(
-      'handler' => 'views_handler_field_aggregator_xss',
+      'handler' => 'views_handler_field_xss',
       'click sortable' => FALSE,
      ),
     // Information for accepting a title as a filter
