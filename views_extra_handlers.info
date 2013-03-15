@@ -1,1 +1,9 @@
 name = Extra Views Handlers
+description = Extra Views Field & Filter Handlers.
+package = Views
+core = 7.x
+dependencies[] = views
+
+; Handlers
+files[] = views/handlers/views_extra_handlers_handler_field_field_config_instance_data_widget.inc
+files[] = views/handlers/views_extra_handlers_handler_filter_field_config_instance_data_widget.inc

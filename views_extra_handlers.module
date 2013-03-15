@@ -1,0 +1,19 @@
+<?php
+// $Id$
+define('EXTRA_VIEWS_PATH', drupal_get_path('module', 'views_extra_handlers'). '/views');
+
+/**
+ * @file
+ *  Provides a generic but powerful API for web services.
+ */
+
+/**
+ * Implementation of hook_views_api().
+ */
+function views_extra_handlers_views_api() {
+  return array(
+    'api' => 2.0,
+	'path' => EXTRA_VIEWS_PATH,
+  );
+}
+
