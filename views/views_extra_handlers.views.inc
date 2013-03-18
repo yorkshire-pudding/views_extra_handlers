@@ -237,6 +237,26 @@ function views_extra_handlers_views_data() {
       'handler' => 'views_handler_sort',
     ),
   );
+	
+	$data['node_revision']['status'] = array(
+    'title' => t('Revision Publish Status'),
+    'help' => t('Whether or not the revision is published.'),
+    'field' => array(
+      'handler' => 'views_handler_field_boolean',
+      'click sortable' => TRUE,
+      'output formats' => array(
+        'published-notpublished' => array(t('Published'), t('Not published')),
+      ),
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_boolean_operator',
+      'label' => t('Revision Published'),
+      'type' => 'yes-no',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+  );
  
   return $data;
 }
