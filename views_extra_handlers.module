@@ -17,3 +17,42 @@ function views_extra_handlers_views_api() {
   );
 }
 
+/**
+ * @see hook_action_info()
+ */
+function views_extra_handlers_action_info() {
+  return array(
+    'views_extra_handlers_node_revision_publish_status_action' => array(
+      'type' => 'node',
+      'label' => t('Revision: Publish Revision.'),
+      'configurable' => FALSE,
+      'triggers' => array('any'),
+    ),
+    'views_extra_handlers_node_revision_unpublish_status_action' => array(
+      'type' => 'node',
+      'label' => t('Revision: UnPublish Revision.'),
+      'configurable' => FALSE,
+      'triggers' => array('any'),
+    ),
+  );
+}
+
+function views_extra_handlers_node_revision_publish_status_action($node, $context) {
+  $this_vid = $node->vid;
+  db_update('node_revision') // Table name no longer needs {}
+  ->fields(array(
+    'status' => 1,
+  ))
+  ->condition('vid', $this_vid, '=')
+  ->execute();
+}
+
+function views_extra_handlers_node_revision_unpublish_status_action($node, $context) {
+  $this_vid = $node->vid;
+  db_update('node_revision') // Table name no longer needs {}
+  ->fields(array(
+    'status' => 0,
+  ))
+  ->condition('vid', $this_vid, '=')
+  ->execute();
+}
