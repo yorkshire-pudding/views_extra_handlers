@@ -8,31 +8,35 @@
 class views_extra_handlers_handler_field_query_alter extends views_handler_field {
 
  function query() {
-  $def = $this->definition;
-  $def['table'] = $this->options['veh_join']['veh_table'];
-  $def['field'] = $this->options['veh_join']['veh_column'];
-  //$def['left_table'] = "node_og_membership";
-  //$def['left_field'] = "nid";
-  $def['type'] = $this->options['veh_join']['veh_join_type'];
-  $def['left_query'] = $this->options['veh_join']['veh_join_condition'];
-
-  if (!empty($def['join_handler']) && class_exists($def['join_handler'])) {
-   $join = new $def['join_handler'];
+  if(!empty($this->options['veh_join']['veh_table'])){
+   $def = $this->definition;
+   $def['table'] = $this->options['veh_join']['veh_table'];
+   $def['field'] = $this->options['veh_join']['veh_column'];
+   //$def['left_table'] = "node_og_membership";
+   //$def['left_field'] = "nid";
+   $def['type'] = $this->options['veh_join']['veh_join_type'];
+   $def['left_query'] = $this->options['veh_join']['veh_join_condition'];
+ 
+   if (!empty($def['join_handler']) && class_exists($def['join_handler'])) {
+    $join = new $def['join_handler'];
+   }
+   else {
+    $join = new views_join_subquery();
+   }
+ 
+   $join->definition = $def;
+   $join->construct();
+   $join->adjusted = TRUE;
+ 
+   // use a short alias for this:
+   $alias = $this->options['veh_join']['veh_table_alias'];
+ 
+ 
+   $this->alias = $this->query->add_relationship($alias, $join, $this->definition['base']);
   }
-  else {
-   $join = new views_join_subquery();
+  if(!empty($this->options['veh_field']['veh_table'])){  
+    $this->field_alias = $this->query->add_field($this->options['veh_field']['veh_table'], $this->options['veh_field']['veh_column'], '');
   }
-
-  $join->definition = $def;
-  $join->construct();
-  $join->adjusted = TRUE;
-
-  // use a short alias for this:
-  $alias = $this->options['veh_join']['veh_table_alias'];
-
-
-  $this->alias = $this->query->add_relationship($alias, $join, $this->definition['base']);
-  $this->field_alias = $this->query->add_field($this->options['veh_field']['veh_table'], $this->options['veh_field']['veh_column'], '');
  }
 
  function option_definition() {
@@ -45,6 +49,9 @@ class views_extra_handlers_handler_field_query_alter extends views_handler_field
   $options['veh_join']['veh_column'] = array('default' => '', 'translatable' => FALSE);
   $options['veh_join']['veh_join_type'] = array('default' => '', 'translatable' => FALSE);
   $options['veh_join']['veh_join_condition'] = array('default' => '', 'translatable' => FALSE);
+  
+  $options['veh_groupby']['veh_add'] = array('default' => '', 'translatable' => FALSE);
+  $options['veh_groupby']['veh_remove'] = array('default' => '', 'translatable' => FALSE);  
   return $options;
  }
 
@@ -102,6 +109,25 @@ class views_extra_handlers_handler_field_query_alter extends views_handler_field
     '#title' => t('Join Condition'),
     '#default_value' => $this->options['veh_join']['veh_join_condition'],
   );
+  $form['veh_groupby'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Groupby'),
+    '#collapsible' => TRUE,
+  );
+  $form['veh_groupby']['veh_add'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Add'),
+    '#default_value' => $this->options['veh_groupby']['veh_add'],
+    '#rows' => 2,
+    '#description' => t('Seperate multiple entries by ,'),    
+  );
+  $form['veh_groupby']['veh_remove'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Remove'),
+    '#default_value' => $this->options['veh_groupby']['veh_remove'],
+    '#rows' => 2,
+    '#description' => t('Seperate multiple entries by ,'),
+  );
  }
  /*
   function options_submit(&$form, &$form_state) {
@@ -111,8 +137,10 @@ class views_extra_handlers_handler_field_query_alter extends views_handler_field
  }
  */
  function render($values) {
-  $data = $values->{$this->field_alias};
+  $data = '';
+  if(isset($this->field_alias) && !empty($this->field_alias) && $this->field_alias != "unknown"){
+    $data = $values->{$this->field_alias};
+  }
   return $data;
-
  }
 }

@@ -5,15 +5,15 @@ define('EXTRA_VIEWS_PATH', drupal_get_path('module', 'views_extra_handlers'). '/
 /**
  * @file
  *  Provides a generic but powerful API for web services.
- */
+*/
 
 /**
  * Implementation of hook_views_api().
- */
+*/
 function views_extra_handlers_views_api() {
   return array(
-    'api' => 2.0,
-	'path' => EXTRA_VIEWS_PATH,
+      'api' => 2.0,
+      'path' => EXTRA_VIEWS_PATH,
   );
 }
 
@@ -22,18 +22,18 @@ function views_extra_handlers_views_api() {
  */
 function views_extra_handlers_action_info() {
   return array(
-    'views_extra_handlers_node_revision_publish_status_action' => array(
-      'type' => 'node',
-      'label' => t('Revision: Publish Revision.'),
-      'configurable' => FALSE,
-      'triggers' => array('any'),
-    ),
-    'views_extra_handlers_node_revision_unpublish_status_action' => array(
-      'type' => 'node',
-      'label' => t('Revision: UnPublish Revision.'),
-      'configurable' => FALSE,
-      'triggers' => array('any'),
-    ),
+      'views_extra_handlers_node_revision_publish_status_action' => array(
+          'type' => 'node',
+          'label' => t('Revision: Publish Revision.'),
+          'configurable' => FALSE,
+          'triggers' => array('any'),
+      ),
+      'views_extra_handlers_node_revision_unpublish_status_action' => array(
+          'type' => 'node',
+          'label' => t('Revision: UnPublish Revision.'),
+          'configurable' => FALSE,
+          'triggers' => array('any'),
+      ),
   );
 }
 
@@ -41,7 +41,7 @@ function views_extra_handlers_node_revision_publish_status_action($node, $contex
   $this_vid = $node->vid;
   db_update('node_revision') // Table name no longer needs {}
   ->fields(array(
-    'status' => 1,
+  'status' => 1,
   ))
   ->condition('vid', $this_vid, '=')
   ->execute();
@@ -51,8 +51,39 @@ function views_extra_handlers_node_revision_unpublish_status_action($node, $cont
   $this_vid = $node->vid;
   db_update('node_revision') // Table name no longer needs {}
   ->fields(array(
-    'status' => 0,
+  'status' => 0,
   ))
   ->condition('vid', $this_vid, '=')
   ->execute();
+}
+
+function views_extra_handlers_query_alter($query){
+  $view = views_get_current_view();
+  if(isset($view->field) && !empty($view->field)){
+    foreach($view->field as $field_name => $field_obj){
+      $handler = $field_obj->definition['handler'];
+      if($handler == "views_extra_handlers_handler_field_query_alter"){
+        $groupby_remove_arr = explode(",", $field_obj->options['veh_groupby']['veh_remove']);
+        $groupby_add_arr = explode(",", $field_obj->options['veh_groupby']['veh_add']);
+        if(isset($query->alterMetaData)){
+          if(isset($query->alterMetaData['view'])){
+            if($query->alterMetaData['view']->name == "discussions"){
+              //Get a list of all 'group by' in the query
+              $fields =& $query->getGroupBy();
+              if(!empty($field_obj->options['veh_groupby']['veh_remove'])){
+                foreach ($groupby_remove_arr as $groupby_remove){
+                  unset($fields[trim($groupby_remove)]);
+                }
+              }
+              if(!empty($field_obj->options['veh_groupby']['veh_add'])){
+                foreach ($groupby_add_arr as $groupby_add){
+                  $query->groupBy($groupby_add);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
