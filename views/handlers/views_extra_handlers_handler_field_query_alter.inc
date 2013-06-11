@@ -12,10 +12,11 @@ class views_extra_handlers_handler_field_query_alter extends views_handler_field
    $def = $this->definition;
    $def['table'] = $this->options['veh_join']['veh_table'];
    $def['field'] = $this->options['veh_join']['veh_column'];
-   //$def['left_table'] = "node_og_membership";
-   //$def['left_field'] = "nid";
+   $def['left_table'] = $this->options['veh_join']['veh_left_table'];
+   $def['left_field'] = $this->options['veh_join']['veh_left_column'];
    $def['type'] = $this->options['veh_join']['veh_join_type'];
-   $def['left_query'] = $this->options['veh_join']['veh_join_condition'];
+   //$def['left_query'] = $this->options['veh_join']['veh_join_condition'];
+   $def['left_query'] = $this->options['veh_join']['veh_left_table'] . "." . $this->options['veh_join']['veh_left_column'];
  
    if (!empty($def['join_handler']) && class_exists($def['join_handler'])) {
     $join = new $def['join_handler'];
@@ -31,8 +32,8 @@ class views_extra_handlers_handler_field_query_alter extends views_handler_field
    // use a short alias for this:
    $alias = $this->options['veh_join']['veh_table_alias'];
  
- 
-   $this->alias = $this->query->add_relationship($alias, $join, $this->definition['base']);
+  // $this->alias = $this->query->add_relationship($alias, $join, $this->definition['base']);
+   $this->alias = $this->query->add_relationship($alias, $join, NULL); 
   }
   if(!empty($this->options['veh_field']['veh_table'])){  
     $this->field_alias = $this->query->add_field($this->options['veh_field']['veh_table'], $this->options['veh_field']['veh_column'], '');
@@ -48,7 +49,9 @@ class views_extra_handlers_handler_field_query_alter extends views_handler_field
   $options['veh_join']['veh_table_alias'] = array('default' => '', 'translatable' => FALSE);
   $options['veh_join']['veh_column'] = array('default' => '', 'translatable' => FALSE);
   $options['veh_join']['veh_join_type'] = array('default' => '', 'translatable' => FALSE);
-  $options['veh_join']['veh_join_condition'] = array('default' => '', 'translatable' => FALSE);
+  //$options['veh_join']['veh_join_condition'] = array('default' => '', 'translatable' => FALSE);
+  $options['veh_join']['veh_left_table'] = array('default' => '', 'translatable' => FALSE);
+  $options['veh_join']['veh_left_column'] = array('default' => '', 'translatable' => FALSE);
   
   $options['veh_groupby']['veh_add'] = array('default' => '', 'translatable' => FALSE);
   $options['veh_groupby']['veh_remove'] = array('default' => '', 'translatable' => FALSE);  
@@ -104,11 +107,22 @@ class views_extra_handlers_handler_field_query_alter extends views_handler_field
     '#title' => t('Join Field'),
     '#default_value' => $this->options['veh_join']['veh_column'],
   );
-  $form['veh_join']['veh_join_condition'] = array(
+/*  $form['veh_join']['veh_join_condition'] = array(
     '#type' => 'textfield',
     '#title' => t('Join Condition'),
     '#default_value' => $this->options['veh_join']['veh_join_condition'],
+  ); */
+  $form['veh_join']['veh_left_table'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Left Table'),
+    '#default_value' => $this->options['veh_join']['veh_left_table'],
   );
+  $form['veh_join']['veh_left_column'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Left Field'),
+    '#default_value' => $this->options['veh_join']['veh_left_column'],
+  );
+  
   $form['veh_groupby'] = array(
     '#type' => 'fieldset',
     '#title' => t('Groupby'),
