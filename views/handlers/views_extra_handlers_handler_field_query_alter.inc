@@ -38,12 +38,24 @@ class views_extra_handlers_handler_field_query_alter extends views_handler_field
   if(!empty($this->options['veh_field']['veh_table'])){  
     $this->field_alias = $this->query->add_field($this->options['veh_field']['veh_table'], $this->options['veh_field']['veh_column'], '');
   }
+  if(!empty($this->options['veh_where']['veh_table'])){  
+    $condition_type = db_condition($this->options['veh_where']['veh_where_type']);
+	$condition = $condition_type->condition($this->options['veh_where']['veh_table'].'.'.$this->options['veh_where']['veh_column'], $this->options['veh_where']['veh_value'], $this->options['veh_where']['veh_where_operator']);
+	$this->query->add_where(0, $condition);  
+  }
  }
 
  function option_definition() {
   $options = parent::option_definition();
   $options['veh_field']['veh_table'] = array('default' => '', 'translatable' => FALSE);
   $options['veh_field']['veh_column'] = array('default' => '', 'translatable' => FALSE);
+  
+  $options['veh_where']['veh_where_type'] = array('default' => '', 'translatable' => FALSE);
+  $options['veh_where']['veh_table'] = array('default' => '', 'translatable' => FALSE);
+  $options['veh_where']['veh_column'] = array('default' => '', 'translatable' => FALSE);
+  $options['veh_where']['veh_value'] = array('default' => '', 'translatable' => FALSE);
+  $options['veh_where']['veh_where_operator'] = array('default' => '', 'translatable' => FALSE);
+
 
   $options['veh_join']['veh_table'] = array('default' => '', 'translatable' => FALSE);
   $options['veh_join']['veh_table_alias'] = array('default' => '', 'translatable' => FALSE);
@@ -74,6 +86,47 @@ class views_extra_handlers_handler_field_query_alter extends views_handler_field
     '#type' => 'textfield',
     '#title' => t('Field'),
     '#default_value' => $this->options['veh_field']['veh_column'],
+  );
+  
+  $form['veh_where'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Where'),
+    '#collapsible' => TRUE,
+  );
+  $form['veh_where']['veh_where_type'] = array(
+    '#type' => 'select',
+    '#title' => t('Type'),
+    '#options' => array(
+      'AND' => t('AND'),
+      'OR' => t('OR'),
+    ),
+    '#default_value' => $this->options['veh_where']['veh_where_type'],
+    '#description' => t('Type of Condition.'),
+  );
+  $form['veh_where']['veh_table'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Where Table'),
+    '#default_value' => $this->options['veh_where']['veh_table'],
+  );
+  $form['veh_where']['veh_column'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Where Field'),
+    '#default_value' => $this->options['veh_where']['veh_column'],
+  );
+  $form['veh_where']['veh_value'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Field Value'),
+    '#default_value' => $this->options['veh_where']['veh_value'],
+  );
+  $form['veh_where']['veh_where_operator'] = array(
+    '#type' => 'select',
+    '#title' => t('Operator'),
+    '#options' => array(
+      '=' => t('='),
+      'LIKE' => t('LIKE'),
+    ),
+    '#default_value' => $this->options['veh_where']['veh_where_operator'],
+    '#description' => t('Operator'),
   );
 
   $form['veh_join'] = array(
