@@ -70,6 +70,9 @@ function views_extra_handlers_views_data() {
      'handler' => 'views_handler_field_xss',
      'click sortable' => FALSE,
    ),
+   'sort' => array(
+     'handler' => 'views_handler_sort',
+   ),
    // Information for accepting a title as a filter
    'filter' => array(
      'handler' => 'views_handler_filter_string',
