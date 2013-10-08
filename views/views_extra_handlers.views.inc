@@ -38,7 +38,7 @@ function views_extra_handlers_views_data() {
    ),
    // Information for accepting a title as a filter
    'filter' => array(
-     'handler' => 'views_handler_filter_string',
+     'handler' => 'views_handler_filter_node_type',
    ),
  );
 
