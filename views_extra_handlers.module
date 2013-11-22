@@ -67,18 +67,16 @@ function views_extra_handlers_query_alter($query){
         $groupby_add_arr = explode(",", $field_obj->options['veh_groupby']['veh_add']);
         if(isset($query->alterMetaData)){
           if(isset($query->alterMetaData['view'])){
-            if($query->alterMetaData['view']->name == "discussions"){
-              //Get a list of all 'group by' in the query
-              $fields =& $query->getGroupBy();
-              if(!empty($field_obj->options['veh_groupby']['veh_remove'])){
-                foreach ($groupby_remove_arr as $groupby_remove){
-                  unset($fields[trim($groupby_remove)]);
-                }
+            //Get a list of all 'group by' in the query
+            $fields =& $query->getGroupBy();
+            if(!empty($field_obj->options['veh_groupby']['veh_remove'])){
+              foreach ($groupby_remove_arr as $groupby_remove){
+                unset($fields[trim($groupby_remove)]);
               }
-              if(!empty($field_obj->options['veh_groupby']['veh_add'])){
-                foreach ($groupby_add_arr as $groupby_add){
-                  $query->groupBy($groupby_add);
-                }
+            }
+            if(!empty($field_obj->options['veh_groupby']['veh_add'])){
+              foreach ($groupby_add_arr as $groupby_add){
+                $query->groupBy($groupby_add);
               }
             }
           }
