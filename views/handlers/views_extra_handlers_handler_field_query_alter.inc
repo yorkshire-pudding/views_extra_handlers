@@ -15,8 +15,11 @@ class views_extra_handlers_handler_field_query_alter extends views_handler_field
    $def['left_table'] = $this->options['veh_join']['veh_left_table'];
    $def['left_field'] = $this->options['veh_join']['veh_left_column'];
    $def['type'] = $this->options['veh_join']['veh_join_type'];
-   //$def['left_query'] = $this->options['veh_join']['veh_join_condition'];
-   $def['left_query'] = $this->options['veh_join']['veh_left_table'] . "." . $this->options['veh_join']['veh_left_column'];
+   if(!empty($this->options['veh_join']['veh_join_condition'])){
+     $def['left_query'] = $this->options['veh_join']['veh_join_condition'];
+   }else{
+     $def['left_query'] = $this->options['veh_join']['veh_left_table'] . "." . $this->options['veh_join']['veh_left_column'];
+   }
  
    if (!empty($def['join_handler']) && class_exists($def['join_handler'])) {
     $join = new $def['join_handler'];
@@ -61,7 +64,7 @@ class views_extra_handlers_handler_field_query_alter extends views_handler_field
   $options['veh_join']['veh_table_alias'] = array('default' => '', 'translatable' => FALSE);
   $options['veh_join']['veh_column'] = array('default' => '', 'translatable' => FALSE);
   $options['veh_join']['veh_join_type'] = array('default' => '', 'translatable' => FALSE);
-  //$options['veh_join']['veh_join_condition'] = array('default' => '', 'translatable' => FALSE);
+  $options['veh_join']['veh_join_condition'] = array('default' => '', 'translatable' => FALSE);
   $options['veh_join']['veh_left_table'] = array('default' => '', 'translatable' => FALSE);
   $options['veh_join']['veh_left_column'] = array('default' => '', 'translatable' => FALSE);
   
@@ -160,11 +163,12 @@ class views_extra_handlers_handler_field_query_alter extends views_handler_field
     '#title' => t('Join Field'),
     '#default_value' => $this->options['veh_join']['veh_column'],
   );
-/*  $form['veh_join']['veh_join_condition'] = array(
+  $form['veh_join']['veh_join_condition'] = array(
     '#type' => 'textfield',
     '#title' => t('Join Condition'),
     '#default_value' => $this->options['veh_join']['veh_join_condition'],
-  ); */
+    '#description' => t('If this is emplty, "Left Table"."Left Field" will be used as condition.'),
+  ); 
   $form['veh_join']['veh_left_table'] = array(
     '#type' => 'textfield',
     '#title' => t('Left Table'),
