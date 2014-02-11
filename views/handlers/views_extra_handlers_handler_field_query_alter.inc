@@ -43,8 +43,14 @@ class views_extra_handlers_handler_field_query_alter extends views_handler_field
   }
   if(!empty($this->options['veh_where']['veh_table'])){  
     $condition_type = db_condition($this->options['veh_where']['veh_where_type']);
-	$condition = $condition_type->condition($this->options['veh_where']['veh_table'].'.'.$this->options['veh_where']['veh_column'], $this->options['veh_where']['veh_value'], $this->options['veh_where']['veh_where_operator']);
-	$this->query->add_where(0, $condition);  
+    //***CURRENT_ARG_1***
+    $where_field_value = $this->options['veh_where']['veh_value'];
+    if(veh_startsWith($where_field_value, "***CURRENT_ARG_") && veh_endsWith($where_field_value, "***")){
+      $argument_pos = substr($where_field_value,15,strlen($where_field_value)-15-3);
+    	$where_field_value = arg($argument_pos);
+    }
+	  $condition = $condition_type->condition($this->options['veh_where']['veh_table'].'.'.$this->options['veh_where']['veh_column'], $where_field_value, $this->options['veh_where']['veh_where_operator']);
+	  $this->query->add_where(0, $condition);  
   }
  }
 

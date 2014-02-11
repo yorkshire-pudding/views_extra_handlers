@@ -85,3 +85,12 @@ function views_extra_handlers_query_alter($query){
     }
   }
 }
+
+function veh_startsWith($haystack, $needle)
+{
+  return $needle === "" || strpos($haystack, $needle) === 0;
+}
+function veh_endsWith($haystack, $needle)
+{
+  return $needle === "" || substr($haystack, -strlen($needle)) === $needle;
+}
