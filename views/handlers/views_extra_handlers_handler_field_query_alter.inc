@@ -75,7 +75,11 @@ class views_extra_handlers_handler_field_query_alter extends views_handler_field
   $options['veh_join']['veh_left_column'] = array('default' => '', 'translatable' => FALSE);
   
   $options['veh_groupby']['veh_add'] = array('default' => '', 'translatable' => FALSE);
-  $options['veh_groupby']['veh_remove'] = array('default' => '', 'translatable' => FALSE);  
+  $options['veh_groupby']['veh_remove'] = array('default' => '', 'translatable' => FALSE);
+  
+  $options['veh_union']['veh_union_view_name'] = array('default' => '', 'translatable' => FALSE);
+  $options['veh_union']['veh_union_view_display'] = array('default' => '', 'translatable' => FALSE);
+  
   return $options;
  }
 
@@ -205,7 +209,23 @@ class views_extra_handlers_handler_field_query_alter extends views_handler_field
     '#rows' => 2,
     '#description' => t('Seperate multiple entries by ,'),
   );
- }
+  
+  $form['veh_union'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Union'),
+    '#collapsible' => TRUE,
+  );
+  $form['veh_union']['veh_union_view_name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('View id'),
+    '#default_value' => $this->options['veh_union']['veh_union_view_name'],
+  );
+  $form['veh_union']['veh_union_view_display'] = array(
+    '#type' => 'textfield',
+    '#title' => t('View display id'),
+    '#default_value' => $this->options['veh_union']['veh_union_view_display'],
+  );
+}
  /*
   function options_submit(&$form, &$form_state) {
  $form_state['values']['options']['format'] = $form_state['values']['options']['content']['format'];

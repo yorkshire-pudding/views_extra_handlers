@@ -86,6 +86,37 @@ function views_extra_handlers_query_alter($query){
   }
 }
 
+/**
+ * Implements hook_views_pre_execute().
+ */
+function views_extra_handlers_views_pre_execute(view &$view) {
+  if(isset($view->field) && !empty($view->field)){
+    foreach($view->field as $field_name => $field_obj){
+      $handler = $field_obj->definition['handler'];
+      if($handler == "views_extra_handlers_handler_field_query_alter"){
+        if(!empty($field_obj->options['veh_union']['veh_union_view_name'])){
+          $query1 = &$view->build_info['query'];
+
+          $union_view_id = $field_obj->options['veh_union']['veh_union_view_name'];
+          $union_view_display_id = $field_obj->options['veh_union']['veh_union_view_display'];
+          $view2 = views_get_view($union_view_id);
+          $view2->set_display($union_view_display_id);
+          $view2->pre_execute();
+          $view2->execute();
+          $query2 = $view2->build_info['query'];
+
+          // Verify that queries are very similar.
+          //dpq($query1);
+          //dpq($query2);
+
+          // Matrimony.
+          $query1 = $query2->union($query1, 'UNION ALL');
+        }
+      }
+    }
+  }
+}
+
 function veh_startsWith($haystack, $needle)
 {
   return $needle === "" || strpos($haystack, $needle) === 0;
