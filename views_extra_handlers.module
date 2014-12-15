@@ -79,6 +79,25 @@ function views_extra_handlers_query_alter($query){
                 $query->groupBy($groupby_add);
               }
             }
+            
+            if(!empty($field_obj->options['veh_orderby']['veh_orderby_date'])){
+              $date_field_alias = $field_obj->options['veh_orderby']['veh_orderby_date'];
+              $sort_order =& $query->getOrderBy();
+              unset($sort_order[$date_field_alias]);
+              $sort_order["(CASE WHEN $date_field_alias < CURRENT_TIMESTAMP
+                    THEN 1
+                    ELSE 0
+               END)"] = 'ASC';
+              $sort_order["(CASE WHEN $date_field_alias < CURRENT_TIMESTAMP THEN $date_field_alias END)"] = 'DESC';
+              $sort_order["(CASE WHEN $date_field_alias >= CURRENT_TIMESTAMP THEN $date_field_alias END)"] = 'ASC';
+            }
+            
+            if(!empty($field_obj->options['veh_orderby']['veh_orderby_custom'])){
+              $custom_orderby = $field_obj->options['veh_orderby']['veh_orderby_custom'];
+              $custom_orderby_direction = $field_obj->options['veh_orderby']['veh_orderby_direction'];
+              $sort_order_custom =& $query->getOrderBy();
+              $sort_order_custom[$custom_orderby] = $custom_orderby_direction;
+            }
           }
         }
       }

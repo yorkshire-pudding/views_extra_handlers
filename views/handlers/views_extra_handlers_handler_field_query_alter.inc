@@ -80,6 +80,8 @@ class views_extra_handlers_handler_field_query_alter extends views_handler_field
   $options['veh_union']['veh_union_view_name'] = array('default' => '', 'translatable' => FALSE);
   $options['veh_union']['veh_union_view_display'] = array('default' => '', 'translatable' => FALSE);
   
+  $options['veh_orderby']['veh_orderby_date'] = array('default' => '', 'translatable' => FALSE);
+  
   return $options;
  }
 
@@ -208,6 +210,35 @@ class views_extra_handlers_handler_field_query_alter extends views_handler_field
     '#default_value' => $this->options['veh_groupby']['veh_remove'],
     '#rows' => 2,
     '#description' => t('Seperate multiple entries by ,'),
+  );
+  
+  $form['veh_orderby'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Orderby'),
+    '#collapsible' => TRUE,
+  );
+  $form['veh_orderby']['veh_orderby_date'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Alias name of the date field to be Sorted by Current Date.'),
+    '#default_value' => $this->options['veh_orderby']['veh_orderby_date'],
+    '#description' => t('Upcoming posts will be at the top sorted by ascending order. Past posts will be below Upcoming posts sorted by descending order.'),
+  );
+  $form['veh_orderby']['veh_orderby_custom'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Sort by Custom query'),
+    '#default_value' => $this->options['veh_orderby']['veh_orderby_custom'],
+    '#rows' => 2,
+    '#description' => t('Example query: (CASE WHEN node.created < CURRENT_TIMESTAMP THEN node.created END)'), 
+  );
+  $form['veh_orderby']['veh_orderby_direction'] = array(
+    '#type' => 'select',
+    '#title' => t('Direction'),
+    '#options' => array(
+      'ASC' => t('ASC'),
+      'DESC' => t('DESC'),
+    ),
+    '#default_value' => $this->options['veh_orderby']['veh_orderby_direction'],
+    '#description' => t('Sort in Ascending or Descending order?'),
   );
   
   $form['veh_union'] = array(
