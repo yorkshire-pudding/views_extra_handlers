@@ -129,7 +129,8 @@ function views_extra_handlers_views_pre_execute(view &$view) {
           //dpq($query2);
 
           // Matrimony.
-          $query1 = $query2->union($query1, 'UNION ALL');
+          $union_type = isset($field_obj->options['veh_union']['veh_union_type']) ? $field_obj->options['veh_union']['veh_union_type'] : 'UNION ALL';
+          $query1 = $query2->union($query1, $union_type);
         }
       }
     }

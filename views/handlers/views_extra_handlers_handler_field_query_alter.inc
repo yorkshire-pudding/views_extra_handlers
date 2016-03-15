@@ -246,6 +246,16 @@ class views_extra_handlers_handler_field_query_alter extends views_handler_field
     '#title' => t('Union'),
     '#collapsible' => TRUE,
   );
+  $form['veh_union']['veh_union_type'] = array(
+    '#type' => 'select',
+    '#title' => t('Type'),
+    '#options' => array(
+      'UNION' => t('UNION'),
+      'UNION ALL' => t('UNION ALL'),
+    ),
+    '#default_value' => $this->options['veh_union']['veh_union_type'],
+    '#description' => t('Sometimes "UNION ALL" results in duplicates.'),
+  );
   $form['veh_union']['veh_union_view_name'] = array(
     '#type' => 'textfield',
     '#title' => t('View id'),
