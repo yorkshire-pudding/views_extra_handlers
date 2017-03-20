@@ -119,18 +119,31 @@ function views_extra_handlers_views_pre_execute(view &$view) {
           $union_view_id = $field_obj->options['veh_union']['veh_union_view_name'];
           $union_view_display_id = $field_obj->options['veh_union']['veh_union_view_display'];
           $view2 = views_get_view($union_view_id);
+          $view2->veh_union_query = TRUE;
           $view2->set_display($union_view_display_id);
+
+          if (!empty($field_obj->options['veh_union']['veh_union_use_args'])) {
+            // Set the same arguments.
+            $view2->set_arguments($view->args);
+          }
+
+          // Remove any pager.
+          $pager = array(
+            'type' => 'none',
+            'options' => array(),
+          );
+          $view2->display_handler->set_option('pager', $pager);
+
           $view2->pre_execute();
           $view2->execute();
-          $query2 = $view2->build_info['query'];
-
-          // Verify that queries are very similar.
-          //dpq($query1);
-          //dpq($query2);
-
-          // Matrimony.
-          $union_type = isset($field_obj->options['veh_union']['veh_union_type']) ? $field_obj->options['veh_union']['veh_union_type'] : 'UNION ALL';
-          $query1 = $query2->union($query1, $union_type);
+          if ($query2 = $view2->build_info['query']) {
+            // Remove any order by.
+            $order_by =& $query2->getOrderBy();
+            $order_by = array();
+            // Matrimony.
+            $union_type = isset($field_obj->options['veh_union']['veh_union_type']) ? $field_obj->options['veh_union']['veh_union_type'] : 'UNION ALL';
+            $query1 = $query2->union($query1, $union_type);
+          }
         }
       }
     }

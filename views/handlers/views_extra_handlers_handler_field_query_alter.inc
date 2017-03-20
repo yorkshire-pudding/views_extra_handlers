@@ -79,7 +79,8 @@ class views_extra_handlers_handler_field_query_alter extends views_handler_field
   
   $options['veh_union']['veh_union_view_name'] = array('default' => '', 'translatable' => FALSE);
   $options['veh_union']['veh_union_view_display'] = array('default' => '', 'translatable' => FALSE);
-  
+  $options['veh_union']['veh_union_use_args'] = array('default' => '1', 'translatable' => FALSE);
+
   $options['veh_orderby']['veh_orderby_date'] = array('default' => '', 'translatable' => FALSE);
   
   return $options;
@@ -265,6 +266,12 @@ class views_extra_handlers_handler_field_query_alter extends views_handler_field
     '#type' => 'textfield',
     '#title' => t('View display id'),
     '#default_value' => $this->options['veh_union']['veh_union_view_display'],
+  );
+  $form['veh_union']['veh_union_use_args'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Use contextual filters'),
+    '#description' => t('Use contextual filters from the selected view and display.'),
+    '#default_value' => $this->options['veh_union']['veh_union_use_args'],
   );
 }
  /*
